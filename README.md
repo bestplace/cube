@@ -1,8 +1,10 @@
 # CUBE
 
-## Dagster + Dagit + Celery + DinD + S3
+## Dagster + Celery + DinD + S3 + Postgres
 
 This is a boilerplate repo for setting up your scalable dagster deployment using docker and ansible
+
+Disclaimer: `Currently DinD Executor is experimental and only available in bestplace/docker`
 
 ### Structure
 
@@ -87,8 +89,9 @@ Example:
 ORIGIN=bestplace BRANCH=bestplace docker-compose build
 ```
 
-
 ### Deploy
+
+Disclaimer: `Local deployment was only tested on OSX. You'll have to change app_host to 172.17.0.1 in your local.yml to run it on linux machine and who knows what else`
 
 The deployment is configured and orchestrated by `ansible`
 
@@ -105,6 +108,8 @@ ansible-playbook local.yml
 ~~~
 
 It will create _dagster folder with all the necessary stuff inside
+
+You can look at all the playbook options in `roles/dagster/defaults/main.yml`
 
 ### Init Storage
 
@@ -131,10 +136,11 @@ If you need to propogate code changes to your worker containers you go as follow
 * uncomment the last line in worker.Dockerfile
 * rebuild (docker-compose build)
 
+### Example pipelines run configs
 
-## Example pipelines run configs
+Now when everythong is ready you can open dagit in your browser (localhost:3000) and run one of these pipelines
 
-### example_yaml_pipeline
+#### example_yaml_pipeline
 ~~~
 solids:
   add_x:
@@ -147,7 +153,7 @@ solids:
       num: 3
 ~~~
 
-### example_add_pipeline
+#### example_add_pipeline
 ~~~
 solids:
   example_add_x:
