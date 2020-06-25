@@ -4,7 +4,7 @@
 
 This is a boilerplate repo for setting up your scalable dagster deployment using docker and ansible
 
-Disclaimer: `Currently DinD Executor is experimental and only available in bestplace/docker`
+Disclaimer: `Currently DinD Executor is experimental and only available in bestplace/dagster`
 
 ### Structure
 
@@ -84,7 +84,7 @@ ORIGIN / BRANCH - dagster github repository for building your containers (defaul
 ~~~
 
 Example:
-`Currently DinD Executor is experimental and is only available in bestplace/docker`
+`Currently DinD Executor is experimental and is only available in bestplace/dagster`
 ```
 ORIGIN=bestplace BRANCH=bestplace docker-compose build
 ```
