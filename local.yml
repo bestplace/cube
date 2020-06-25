@@ -1,0 +1,7 @@
+- hosts: localhost
+  roles:
+  - role: dagster
+    app_host: docker.for.mac.localhost
+    local_root: "{{ lookup('pipe', 'pwd') }}"
+    app_root: "{{ local_root }}/_dagster"
+    docker_shared: "{{ app_root }}/_"

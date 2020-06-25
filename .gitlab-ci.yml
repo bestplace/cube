@@ -1,0 +1,36 @@
+image: docker.bestplace.tech/bestplace/balu:v0.0.33
+
+stages:
+- release
+- deploy
+- sync
+
+before_script:
+- . balu-init-ssh BBB_DEPLOY_KEY BBB_KNOWN_HOSTS
+- echo $ANSIBLE_VAULT_PASS > .vault_pass.txt
+
+release:
+  stage: release
+  only: [master]
+  script:
+  - >
+    docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY &&
+    export ORIGIN=bestplace && export BRANCH=bestplace  &&
+    docker-compose build && docker-compose push &&
+    export VERSION_TAG="v$(balu-version)" &&
+    docker-compose build && docker-compose push &&
+    curl --header "PRIVATE-TOKEN: $TAGS_PUSH_TOKEN" -d "tag_name=$VERSION_TAG&ref=$CI_COMMIT_SHA" "https://git.bestplace.tech/api/v4/projects/$CI_PROJECT_ID/repository/tags"
+
+deploy:
+  when: manual
+  only: [master]
+  stage: deploy
+  script:
+  - DEPLOY=yes ansible-playbook -i hosts.yml --vault-id .vault_pass.txt dev3.yml
+
+sync:
+  when: manual
+  only: [master]
+  stage: sync
+  script:
+  - ansible-playbook -i hosts.yml --vault-id .vault_pass.txt dev3.yml

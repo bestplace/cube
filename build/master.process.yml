@@ -1,0 +1,15 @@
+apps:
+- name: dagit
+  exec_interpreter: none
+  script : dagit
+  args: ['-h', '0.0.0.0', '-p', '3000']
+  # We watch source code changes and restart server when the new code has been deployed
+  watch:
+  - /opt/dagster/app/cube
+  - /opt/dagster/app/dagster
+  ignore_watch : ['**/*.pyc', "**/.git", , "**/.git/**/*", "**/__pycache__", "**/__pycache__/**/*", "**/_", "**/_/**/*"]
+
+# There are no schedules yet, so just leave it commented
+# - name: cron
+#   exec_interpreter: none
+#   script : cronstart

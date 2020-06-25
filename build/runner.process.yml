@@ -1,0 +1,10 @@
+apps:
+- name: runner
+  exec_interpreter: none
+  script : int2term
+  args: ["dagster-celery worker start -y celery_config.yaml"]
+  # We watch source code changes and restart server when the new code has been deployed
+  watch:
+  - /opt/dagster/app/cube
+  - /opt/dagster/app/dagster
+  ignore_watch : ['**/*.pyc', "**/.git", , "**/.git/**/*", "**/__pycache__", "**/__pycache__/**/*", "**/_", "**/_/**/*"]

@@ -1,0 +1,19 @@
+name: example_yaml_pipeline
+description: multioutput description
+solids:
+  - def: example_add_one
+  - def: example_add_x
+    alias: add_x
+  - def: example_add_mul
+    alias: add_mul
+    deps:
+      left: example_add_one
+      right: add_x
+  - def: example_info
+    alias: info_sum
+    deps:
+      value: add_mul.sum
+  - def: example_info
+    alias: info_product
+    deps:
+      value: add_mul.product

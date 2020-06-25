@@ -1,0 +1,16 @@
+.ipynb_checkpoints/
+__pycache__
+**/.ipynb_checkpoints/
+**/__pycache__
+.idea
+.ci
+*.DS_Store
+*.pyc
+*.swp
+
+_dagster
+*.egg-info
+.eggs/
+__version__.py
+devel.ini
+python_modules

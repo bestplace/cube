@@ -1,0 +1,120 @@
+version: '2.1'
+
+services:
+  cube-storage:
+    image: zenko/cloudserver
+    container_name: cube-storage
+    network_mode: bridge
+    restart: always
+    environment:
+      SCALITY_ACCESS_KEY_ID: {{ s3server_access }}
+      SCALITY_SECRET_ACCESS_KEY: {{ s3server_secret }}
+      REMOTE_MANAGEMENT_DISABLE: '1'
+      ENDPOINT: {{ app_host }}
+    ports:
+    - '{{ s3server_port }}:8000'
+    volumes:
+    - '{{ docker_shared }}/s3server/data:/usr/src/app/localData'
+    - '{{ docker_shared }}/s3server/metadata:/usr/src/app/localMetadata'
+
+  cube-rabbitmq:
+    image: rabbitmq:3.8.2
+    container_name: cube-rabbitmq
+    network_mode: bridge
+    restart: always
+    ports:
+    - '{{ rabbitmq_port }}:5672'
+    volumes:
+    - '{{ docker_shared }}/rabbitmq:/var/lib/rabbitmq'
+  
+  cube-postgres:
+    image: postgres:12-alpine
+    container_name: cube-postgres
+    network_mode: bridge
+    restart: always
+    environment:
+      POSTGRES_DBNAME: {{ postgres_name }}
+      POSTGRES_USER: {{ postgres_user }}
+      POSTGRES_PASSWORD: '{{ postgres_pass }}'
+    ports:
+    - '{{ postgres_port }}:5432'
+    volumes:
+    - '{{ docker_shared }}/postgresql:/var/lib/postgresql/data'
+
+  cube-master:
+    image: '{{ docker_registry }}:master-latest'
+    container_name: cube-master
+    network_mode: bridge
+    restart: always
+    environment:
+      APP_HOST: {{ app_host }}
+      RABBITMQ_URI: {{ rabbitmq_uri }}
+
+      S3SERVER_URI: {{ s3server_uri }}
+      AWS_ACCESS_KEY_ID: {{ s3server_access }}
+      AWS_SECRET_ACCESS_KEY: {{ s3server_secret }}
+
+      DOCKER_REGISTRY: {{ docker_registry }}
+      DOCKER_USERNAME: {{ docker_username }}
+      DOCKER_PASSWORD: {{ docker_password }}
+      WORKER_IMAGE: {{ worker_image }}
+
+      POSTGRES_HOST: {{ postgres_host }}
+      POSTGRES_PORT: {{ postgres_port }}
+      POSTGRES_DBNAME: {{ postgres_name }}
+      POSTGRES_USER: {{ postgres_user }}
+      POSTGRES_PASSWORD: '{{ postgres_pass }}'
+    depends_on:
+    - cube-rabbitmq
+    - cube-postgres
+    - cube-storage
+    ports:
+    - '{{ app_port }}:3000'
+    volumes:
+    - ./cube:/opt/dagster/app/cube
+{% if dagster_devel_path %}
+    - {{ dagster_devel_path }}/python_modules/dagster/dagster:/opt/dagster/app/dagster/python_modules/dagster/dagster
+    - {{ dagster_devel_path }}/python_modules/dagster-graphql/dagster_graphql:/opt/dagster/app/dagster/python_modules/dagster-graphql/dagster_graphql
+    - {{ dagster_devel_path }}/python_modules/libraries/dagster-celery/dagster_celery:/opt/dagster/app/dagster/python_modules/libraries/dagster-celery/dagster_celery
+{% endif %}
+
+{% for w in range(runners) %}
+  cube-runner-{{ w }}:
+    image: '{{ docker_registry }}:runner-latest'
+    container_name: cube-runner-{{ w }}
+    network_mode: bridge
+    restart: always
+    mem_limit: {{ mem_limit }}G
+    shm_size: 16G
+    environment:
+      APP_HOST: {{ app_host }}
+      RABBITMQ_URI: {{ rabbitmq_uri }}
+
+      S3SERVER_URI: {{ s3server_uri }}
+      AWS_ACCESS_KEY_ID: {{ s3server_access }}
+      AWS_SECRET_ACCESS_KEY: {{ s3server_secret }}
+
+      DOCKER_REGISTRY: {{ docker_registry }}
+      DOCKER_USERNAME: {{ docker_username }}
+      DOCKER_PASSWORD: {{ docker_password }}
+      WORKER_IMAGE: {{ worker_image }}
+
+      POSTGRES_HOST: {{ postgres_host }}
+      POSTGRES_PORT: {{ postgres_port }}
+      POSTGRES_DBNAME: {{ postgres_name }}
+      POSTGRES_USER: {{ postgres_user }}
+      POSTGRES_PASSWORD: '{{ postgres_pass }}'
+    depends_on:
+    - cube-rabbitmq
+    - cube-postgres
+    - cube-storage
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ./cube:/opt/dagster/app/cube
+{% if dagster_devel_path %}
+    - {{ dagster_devel_path }}/python_modules/dagster/dagster:/opt/dagster/app/dagster/python_modules/dagster/dagster
+    - {{ dagster_devel_path }}/python_modules/dagster-graphql/dagster_graphql:/opt/dagster/app/dagster/python_modules/dagster-graphql/dagster_graphql
+    - {{ dagster_devel_path }}/python_modules/libraries/dagster-celery/dagster_celery:/opt/dagster/app/dagster/python_modules/libraries/dagster-celery/dagster_celery
+{% endif %}
+
+{% endfor %}

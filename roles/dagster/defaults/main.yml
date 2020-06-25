@@ -1,0 +1,36 @@
+# Полный путь к папке, из которой запускается ansible-playbook
+app_root: ~/_dagster
+app_owner: '{{ ansible_user }}'
+app_host: docker.for.mac.localhost
+app_port: 3000
+docker_shared: /docker_shared
+mem_limit: 16
+runners: 2
+
+docker_registry: https://hub.docker.com
+docker_username: unknown
+docker_password: pass
+worker_image: busybox
+
+postgres_host: '{{ app_host }}'
+postgres_port: 5432
+postgres_name: cube
+postgres_user: cube
+postgres_pass: cube
+
+s3server_host: '{{ app_host }}'
+s3server_port: 8000
+s3server_access: cube
+s3server_secret: cube
+s3server_uri: 'http://{{ s3server_host }}:{{ s3server_port }}'
+
+rabbitmq_host: '{{ app_host }}'
+rabbitmq_port: 5672
+rabbitmq_user: guest
+rabbitmq_pass: guest
+rabbitmq_uri: 'amqp://{{ rabbitmq_user }}:{{ rabbitmq_pass }}@{{ rabbitmq_host }}:{{ rabbitmq_port }}//'
+
+deploy: "{{ lookup('env', 'DEPLOY') or 'no' }}"
+version_tag: "{{ lookup('env', 'VERSION_TAG') or 'latest' }}"
+
+dagster_devel_path: "{{ lookup('ini', 'dagster_devel_path section=default file=devel.ini', errors='ignore') }}"

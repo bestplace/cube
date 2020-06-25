@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# We have to trap and substitute SIGINT provided by pm2 with SIGTERM
+# awaited by celery for a gracefull reload
+
+terminate() (
+    echo "TERM $WORKER_PID"
+    kill -TERM $WORKER_PID
+)
+trap 'terminate' SIGINT
+$1 & export WORKER_PID=$!
+wait $WORKER_PID

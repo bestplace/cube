@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# see: https://unix.stackexchange.com/a/453053 - fixes inflated hard link count
+touch /etc/crontab /etc/cron.*/*
+
+service cron start
+
+# Add all schedules
+dagster schedule up
+
+# Restart previously running schedules
+dagster schedule restart --restart-all-running
