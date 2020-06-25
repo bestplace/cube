@@ -78,7 +78,7 @@ All of master, runner and worker are built with docker-compose file at root
 
 It accepts several config variables from env:
 ~~~
-DOCKER_REGISTRY - your docker registry (must be the same as in your hosts.yml, default=local)
+DOCKER_REGISTRY - your docker registry (must be the same as in your hosts.yml, default=cube)
 VERSION_TAG     - image version tag (default=latest)
 ORIGIN / BRANCH - dagster github repository for building your containers (default=dagster-io / master)
 ~~~
@@ -138,20 +138,9 @@ If you need to propogate code changes to your worker containers you go as follow
 
 ### Example pipelines run configs
 
-Now when everythong is ready you can open dagit in your browser (localhost:3000) and run one of these pipelines
+Now when everything is ready you can open dagit in your browser (localhost:3000)
 
-#### example_yaml_pipeline
-~~~
-solids:
-  add_x:
-    config:
-      x: 1
-    inputs:
-      num: 3
-  example_add_one:
-    inputs:
-      num: 3
-~~~
+Select one of the piplines and go to playground. Select celery-docker preset and paste one of the appropriate configs below
 
 #### example_add_pipeline
 ~~~
@@ -166,3 +155,17 @@ solids:
       num: 3
 ~~~
 
+#### example_yaml_pipeline
+~~~
+solids:
+  add_x:
+    config:
+      x: 1
+    inputs:
+      num: 3
+  example_add_one:
+    inputs:
+      num: 3
+~~~
+
+and run launch!

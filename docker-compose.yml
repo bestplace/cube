@@ -2,7 +2,7 @@ version: '3'
 
 services:
   cube_master:
-    image: ${DOCKER_REGISTRY:-local}:master-${VERSION_TAG:-latest}
+    image: ${DOCKER_REGISTRY:-cube}:master-${VERSION_TAG:-latest}
     build:
       context: build
       dockerfile: master.Dockerfile
@@ -11,7 +11,7 @@ services:
         branch: ${BRANCH:-master}
 
   cube_runner:
-    image: ${DOCKER_REGISTRY:-local}:runner-${VERSION_TAG:-latest}
+    image: ${DOCKER_REGISTRY:-cube}:runner-${VERSION_TAG:-latest}
     build:
       context: build
       dockerfile: runner.Dockerfile
@@ -20,7 +20,7 @@ services:
         branch: ${BRANCH:-master}
 
   cube_worker:
-    image: ${DOCKER_REGISTRY:-local}:worker-${VERSION_TAG:-latest}
+    image: ${DOCKER_REGISTRY:-cube}:worker-${VERSION_TAG:-latest}
     build:
       context: .
       dockerfile: worker.Dockerfile

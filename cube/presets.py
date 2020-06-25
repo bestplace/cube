@@ -14,7 +14,7 @@ celery_docker_preset = PresetDefinition(
                 'config': {
                     'broker': f'amqp://guest:guest@{APP_HOST}:5672//',
                     'docker_image': WORKER_IMAGE,
-                    'repo_location_name': 'bestplace',
+                    'repo_location_name': 'cube',
                 }
             }
         },

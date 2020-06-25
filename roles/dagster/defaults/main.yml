@@ -7,10 +7,10 @@ docker_shared: /docker_shared
 mem_limit: 16
 runners: 2
 
-docker_registry: https://hub.docker.com
-docker_username: unknown
-docker_password: pass
-worker_image: busybox
+docker_registry: cube
+docker_username: null
+docker_password: null
+worker_image: '{{ docker_registry }}:worker-latest'
 
 postgres_host: '{{ app_host }}'
 postgres_port: 5432

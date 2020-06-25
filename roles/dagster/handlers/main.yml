@@ -1,4 +1,4 @@
 - name: Reload docker-compose
-  shell: docker-compose down --remove-orphans && docker-compose pull && docker-compose up -d
+  shell: docker-compose up -d
   args:
     chdir: '{{ app_root }}'

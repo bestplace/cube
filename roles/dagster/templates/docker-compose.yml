@@ -55,9 +55,12 @@ services:
       AWS_SECRET_ACCESS_KEY: {{ s3server_secret }}
 
       DOCKER_REGISTRY: {{ docker_registry }}
-      DOCKER_USERNAME: {{ docker_username }}
-      DOCKER_PASSWORD: {{ docker_password }}
       WORKER_IMAGE: {{ worker_image }}
+
+      {% if docker_username %}
+      DOCKER_USERNAME: {{ docker_username }}
+      DOCKER_PASSWORD: '{{ docker_password }}'
+      {% endif %}
 
       POSTGRES_HOST: {{ postgres_host }}
       POSTGRES_PORT: {{ postgres_port }}
@@ -95,9 +98,12 @@ services:
       AWS_SECRET_ACCESS_KEY: {{ s3server_secret }}
 
       DOCKER_REGISTRY: {{ docker_registry }}
-      DOCKER_USERNAME: {{ docker_username }}
-      DOCKER_PASSWORD: {{ docker_password }}
       WORKER_IMAGE: {{ worker_image }}
+
+      {% if docker_username %}
+      DOCKER_USERNAME: {{ docker_username }}
+      DOCKER_PASSWORD: '{{ docker_password }}'
+      {% endif %}
 
       POSTGRES_HOST: {{ postgres_host }}
       POSTGRES_PORT: {{ postgres_port }}
